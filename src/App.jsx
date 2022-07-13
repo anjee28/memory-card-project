@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Card from './components/Card';
 
 function App() {
+	const [score, setScore] = useState(0);
 	const [content, setContent] = useState([
 		{ id: 1, data: 10024, selected: false },
 		{ id: 2, data: 10042, selected: false },
@@ -18,27 +19,50 @@ function App() {
 		{ id: 12, data: 14200, selected: false },
 	]);
 
+	//Randomize card onload
+	useEffect(() => {
+		let arr = [...content];
+		arr.sort((a, b) => 0.5 - Math.random());
+		setContent(arr);
+	}, []);
+
+	//Shuffle Cards
 	const shuffleArray = (e) => {
+		let scoreUpdate = score;
 		let arr = [...content];
 		const index = arr.findIndex((object) => {
 			return object.id === parseInt(e.target.id);
 		});
 
 		if (arr[index].selected) {
-			alert('Already Selected');
+			alert(`Your score is ${score}`);
+			restart();
 		} else {
+			scoreUpdate++;
 			arr[index].selected = true;
-
 			arr.sort((a, b) => 0.5 - Math.random());
-
 			setContent(arr);
-			console.log(e.target.id);
-			console.log(content);
+			setScore(scoreUpdate);
 		}
+	};
+
+	const restart = () => {
+		let arr = [...content];
+		arr.sort((a, b) => 0.5 - Math.random());
+
+		arr.forEach((value) => {
+			value.selected = false;
+			console.log(value.selected);
+		});
+
+		console.log(arr);
+		setContent(arr);
+		setScore(0);
 	};
 
 	return (
 		<div className="App">
+			<div>{score}</div>
 			<div className="cardContainer">
 				{content.map((data) => (
 					<Card
@@ -49,6 +73,7 @@ function App() {
 					/>
 				))}
 			</div>
+			<button onClick={restart}>Restart</button>
 		</div>
 	);
 }
